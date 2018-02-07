@@ -1,0 +1,14 @@
+{
+  "name": "algo-comparer-demo",
+  "version": "0.0.1",
+  "description": "A demo for the algorithm comparer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zorica Stefanovska",
+  "license": "MIT",
+  "dependencies": {
+    "algo-comparer": "0.0.6"
+  }
+}
