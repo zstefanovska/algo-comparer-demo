@@ -9,6 +9,6 @@
   "author": "Zorica Stefanovska",
   "license": "MIT",
   "dependencies": {
-    "algo-comparer": "0.0.6"
+    "algo-comparer": "0.0.7"
   }
 }

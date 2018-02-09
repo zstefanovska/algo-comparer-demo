@@ -1,17 +1,19 @@
-import { AlgorithmComparer, Algorithm, ProblemOptions } from "algo-comparer/dist";
+import { AlgorithmComparer, Algorithm, ProblemOptions, Analyzer } from "algo-comparer/dist";
+import { SortAnalyzer } from "./sort-analyzer";
 
 let options: ProblemOptions = {
     name: "Sorting",
-    metricNames: ["comparisons", "swaps"],
-    inputs: (index) => Array(index).fill(null).map((_, index) => index),
+    metricNames: ["comparisons", "swaps", "accesses"],
+    inputs: (index) => Array(index * 50).fill(null).map((_, i) => i),
     inputLength: 100
 }
 
-let comparer = new AlgorithmComparer(options);
+let comparer = new AlgorithmComparer(options, new SortAnalyzer());
 
 let bubbleSort: Algorithm = (() => {
     let comparisons = 0;
     let swaps = 0;
+    let accesses = 0;
 
     /**
  * Swaps two values in the heap
@@ -21,6 +23,7 @@ let bubbleSort: Algorithm = (() => {
  */
     function swap(array: number[], findex: number, sindex: number) {
         swaps++;
+        accesses += 4;
         var temp = array[findex];
         array[findex] = array[sindex];
         array[sindex] = temp;
@@ -33,13 +36,10 @@ let bubbleSort: Algorithm = (() => {
             for (var j = (length - i); j > 0; j--) {
                 //Compare the adjacent positions
                 comparisons++;
+                accesses += 2;
                 if (items[j] < items[j - 1]) {
                     //Swap the numbers
                     swap(items, j, j - 1);
-                    swaps++;
-                    var tmp = items[j];
-                    items[j] = items[j - 1];
-                    items[j - 1] = tmp;
                 }
             }
         }
@@ -50,9 +50,14 @@ let bubbleSort: Algorithm = (() => {
         problemName: "Sorting",
         metrics: {
             comparisons: () => comparisons,
-            swaps: () => swaps
+            swaps: () => swaps,
+            accesses: () => accesses
         },
-        reset: () => { },
+        reset: () => {
+            swaps = 0;
+            comparisons = 0;
+            accesses = 0;
+        },
         run: sort
     }
 })();
@@ -60,7 +65,7 @@ let bubbleSort: Algorithm = (() => {
 let quicksort: Algorithm = (() => {
     let comparisons = 0;
     let swaps = 0;
-
+    let accesses = 0;
     /**
      * Swaps two values in the heap
      *
@@ -69,6 +74,7 @@ let quicksort: Algorithm = (() => {
      */
     function swap(array: number[], findex: number, sindex: number) {
         swaps++;
+        accesses += 4;
         var temp = array[findex];
         array[findex] = array[sindex];
         array[sindex] = temp;
@@ -84,7 +90,7 @@ let quicksort: Algorithm = (() => {
      * @param {int} left The index of the rightmost element
      */
     function partition(array: number[], pivot: number, left: number, right: number) {
-
+        accesses += 1;
         var storeIndex = left, pivotValue = array[pivot];
 
         // put the pivot on the right
@@ -96,6 +102,7 @@ let quicksort: Algorithm = (() => {
             // if the value is less than the pivot's
             // value put it to the left of the pivot
             // point and move the pivot point along one
+            accesses += 1;
             if (array[v] < pivotValue) {
                 swap(array, v, storeIndex);
                 storeIndex++;
@@ -152,9 +159,14 @@ let quicksort: Algorithm = (() => {
         problemName: "Sorting",
         metrics: {
             comparisons: () => comparisons,
-            swaps: () => swaps
+            swaps: () => swaps,
+            accesses: () => accesses
         },
-        reset: () => { },
+        reset: () => {
+            swaps = 0;
+            comparisons = 0;
+            accesses = 0;
+        },
         run: sort
     };
 })();
@@ -250,11 +262,12 @@ let mergeSort: Algorithm = (() => {
     }
 
     return {
-        name: "Quick Sort",
+        name: "Merge Sort",
         problemName: "Sorting",
         metrics: {
             comparisons: () => comparisons,
-            swaps: () => swaps
+            swaps: () => swaps,
+            accesses: () => 0
         },
         reset: () => { },
         run: sort
@@ -263,5 +276,6 @@ let mergeSort: Algorithm = (() => {
 
 comparer.registerAlgorithm(bubbleSort);
 comparer.registerAlgorithm(quicksort);
+comparer.registerAlgorithm(mergeSort);
 
 export { comparer as OrderedSortComparer };
